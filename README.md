@@ -48,6 +48,15 @@ routes/api.php
 ## Authorisation
 ![img](https://github.com/ngarawakimani/ffth_api/blob/develop/screenshots/2019-07-08_0105.png)
 
+## Make a GET Request
+![img](https://github.com/ngarawakimani/ffth_api/blob/develop/screenshots/2019-07-08_0106.png)
+
+## Example Successfull Request
+![img](https://github.com/ngarawakimani/ffth_api/blob/develop/screenshots/2019-07-08_0108.png)
+
+## Example Unsuccessfull Request
+![img](https://github.com/ngarawakimani/ffth_api/blob/develop/screenshots/2019-07-08_0107.png)
+
 ## Testing
 
 Please run the following command for unit testing

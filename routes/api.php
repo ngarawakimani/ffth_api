@@ -13,17 +13,24 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::group(['middleware' => ['json.response','cors']], function () {
 
-Route::group(['prefix' => 'v1', 'namespace' => 'Api'], function() {
+    Route::group(['prefix' => 'v1', 'namespace' => 'Api'], function() {
 
-    Route::middleware('auth:api')->group(function () {
+        Route::middleware('auth:api')->group(function () {
 
-        Route::resource('/children', 'ChildController');
-        Route::resource('/sponsorship', 'SponsorshipController');
-        Route::resource('/crisis', 'CrisisController');
+            Route::resource('/children', 'ChildController');
+            Route::resource('/sponsorship', 'SponsorshipController');
+            Route::resource('/crisis', 'CrisisController');
+            Route::get('/stats', 'StatsController@index');
+
+            Route::post('logout', 'AuthController@logout');
+
+        });
+
+        Route::post('register', 'AuthController@register');
+        Route::post('login', 'AuthController@login');
 
     });
-
-    Route::post('register', 'RegisterController@register');
 
 });

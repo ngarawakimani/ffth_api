@@ -18,7 +18,7 @@ class ChildController extends BaseController
      */
     public function index()
     {
-        return $this->sendResponse(ChildResource::collection(Child::paginate(10)), 'Data fetched successfully');
+        return $this->sendResponse(ChildResource::collection(Child::all()), 'Data fetched successfully');
     }
 
     /**
@@ -42,7 +42,11 @@ class ChildController extends BaseController
 
         $child = new Child();
 
-        return $this->storePUTData($request,$child);
+        if ($this->storePUTData($request,$child)) {
+            return $this->sendResponse(new ChildResource($child), 'Child Added successfully.');
+        } else {
+            return $this->sendError('Database Error.', ['Unnable to save data']);
+        }
     }
 
     /**
@@ -86,7 +90,12 @@ class ChildController extends BaseController
     public function update(Request $request, Child $child)
     {
         //
-        return $this->storePUTData($request,$child);
+
+        if ($this->storePUTData($request,$child)) {
+            return $this->sendResponse(new ChildResource($child), 'Child Updated successfully.');
+        } else {
+            return $this->sendError('Database Error.', ['Unnable to save data']);
+        }
     }
 
     /**
@@ -122,7 +131,7 @@ class ChildController extends BaseController
             'Country' => 'required',
             'gender' => 'required',
             'date_of_birth' => 'required',
-            'photo' => 'required|mimes:jpg,jpeg,png,gif',
+            // 'photo' => 'required|mimes:jpg,jpeg,png,gif',
             'hobbies' => 'required',
             'history' => 'required',
             'support_amount' => 'required',
@@ -133,10 +142,16 @@ class ChildController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        if($request->hasfile('photo')){
-           $file = $request->file('photo');
-           $child_image_name = time().$file->getClientOriginalName();
-           $file->move(storage_path().'/app/public/images/', $child_image_name);
+        if($request->input('photo') !== null || !empty($request->input('photo'))){
+
+            if($request->hasfile('photo')){
+               $file = $request->file('photo');
+               $child_image_name = time().$file->getClientOriginalName();
+               $file->move(storage_path().'/app/public/images/', $child_image_name);
+            }
+
+        }else{
+            $child_image_name = null;
         }
 
         $child->first_name = $request->input('first_name');
@@ -149,12 +164,17 @@ class ChildController extends BaseController
         $child->history = $request->input('history');
         $child->support_amount = $request->input('support_amount');
         $child->frequency = $request->input('frequency');
-        $child->photo = 'images/' . $child_image_name;
+
+        if($child_image_name !== null){
+
+            $child->photo = 'images/' . $child_image_name;
+
+        }
 
         if ($child->save()) {
-            return $this->sendResponse(new ChildResource($child), 'Child register successfully.');
+            return true;
         } else {
-            return $this->sendError('Database Error.', ['Unnable to save data']);
+            return false;
         }
 
     }
